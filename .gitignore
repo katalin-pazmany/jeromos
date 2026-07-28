@@ -9,3 +9,10 @@ next-env.d.ts
 
 # applicant personal data (keep private)
 data/applications.json
+
+# source originals (working copies live in public/)
+/build
+/Gallery
+/collage
+/jeromos_logo.svg
+/jeromos_title.svg
