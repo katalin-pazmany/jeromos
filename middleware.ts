@@ -10,7 +10,7 @@ const COOKIE = "site_gate";
 const SALT = "::jeromos-site";
 
 function sitePassword(): string {
-  return process.env.SITE_PASSWORD || "jeromos2026";
+  return (process.env.SITE_PASSWORD || "jeromos2026").trim();
 }
 
 async function expectedToken(): Promise<string> {

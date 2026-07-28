@@ -12,8 +12,9 @@ import crypto from "crypto";
 // This is adequate for a local / single-owner site served over HTTPS. For a
 // public multi-user deployment, use a real auth provider.
 
-const PW = process.env.ADMIN_PASSWORD;
-export const adminConfigured = Boolean(PW && PW.length > 0);
+// Trim so a stray space pasted into the env value can't lock the owner out.
+const PW = (process.env.ADMIN_PASSWORD || "").trim();
+export const adminConfigured = PW.length > 0;
 export const SESSION_COOKIE = "jeromos_admin";
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 
@@ -26,7 +27,7 @@ function safeEqual(a: string, b: string): boolean {
 
 export function checkPassword(input: string): boolean {
   if (!PW) return false;
-  return safeEqual(input, PW);
+  return safeEqual(input.trim(), PW);
 }
 
 /** Opaque session token derived from the secret (cannot be forged without it). */

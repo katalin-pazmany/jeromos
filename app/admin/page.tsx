@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Dog } from "@/data/dogs";
+import PasswordInput from "@/components/PasswordInput";
 
 const sizes = ["kicsi", "közepes", "nagy"];
 const energies = ["nyugodt", "kiegyensúlyozott", "energikus"];
@@ -130,11 +131,10 @@ export default function AdminPage() {
             <p className="admin-sub">Add meg az admin jelszót a folytatáshoz.</p>
             {error && <div className="admin-alert error">{error}</div>}
             <form onSubmit={login} className="admin-login">
-              <input
-                type="password"
-                placeholder="Admin jelszó"
+              <PasswordInput
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={setPassword}
+                placeholder="Admin jelszó"
                 autoFocus
               />
               <button type="submit" className="button solid">

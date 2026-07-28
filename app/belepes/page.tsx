@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function Belepes() {
   const [password, setPassword] = useState("");
@@ -37,11 +38,10 @@ export default function Belepes() {
         </p>
         {error && <div className="admin-alert error">{error}</div>}
         <form onSubmit={submit} className="admin-login gate-form">
-          <input
-            type="password"
-            placeholder="Jelszó"
+          <PasswordInput
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={setPassword}
+            placeholder="Jelszó"
             autoFocus
           />
           <button type="submit" className="button solid" disabled={loading}>

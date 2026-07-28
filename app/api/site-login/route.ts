@@ -5,7 +5,7 @@ const COOKIE = "site_gate";
 const SALT = "::jeromos-site";
 
 function sitePassword(): string {
-  return process.env.SITE_PASSWORD || "jeromos2026";
+  return (process.env.SITE_PASSWORD || "jeromos2026").trim();
 }
 
 function token(): string {
@@ -16,7 +16,8 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
-  const password = typeof body.password === "string" ? body.password : "";
+  const password =
+    typeof body.password === "string" ? body.password.trim() : "";
 
   if (password !== sitePassword()) {
     return NextResponse.json({ error: "Hibás jelszó." }, { status: 401 });
