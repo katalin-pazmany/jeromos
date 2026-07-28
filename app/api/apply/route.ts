@@ -45,20 +45,14 @@ export async function POST(request: Request) {
     dogLabel ? ` (${dogLabel})` : ""
   }`;
 
-  const text = [
-    `Név: ${name}`,
-    `E-mail: ${email}`,
-    phone && `Telefon: ${phone}`,
-    city && `Lakhely: ${city}`,
-    garden && `Van kertje: ${garden}`,
-    otherPets && `Van már állata: ${otherPets}`,
-    dogLabel && `Kiszemelt kutya: ${dogLabel}`,
-    "",
-    "Bemutatkozás:",
-    intro,
-  ]
-    .filter((line) => line !== false && line !== undefined)
-    .join("\n");
+  const lines: string[] = [`Név: ${name}`, `E-mail: ${email}`];
+  if (phone) lines.push(`Telefon: ${phone}`);
+  if (city) lines.push(`Lakhely: ${city}`);
+  if (garden) lines.push(`Van kertje: ${garden}`);
+  if (otherPets) lines.push(`Van már állata: ${otherPets}`);
+  if (dogLabel) lines.push(`Kiszemelt kutya: ${dogLabel}`);
+  lines.push("", "Bemutatkozás:", intro);
+  const text = lines.join("\n");
 
   // Always keep a local record.
   try {
