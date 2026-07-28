@@ -225,6 +225,7 @@ h3 {
   height: 100%;
   min-height: 0;
   object-fit: cover;
+  object-position: center 32%;
   display: block;
 }
 .hero-shade {
@@ -1716,16 +1717,24 @@ footer {
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
+  /* 3 columns × 3 rows = show 9 larger tiles so dogs stay visible */
   .hero-collage {
     grid-template-columns: repeat(3, 1fr);
   }
+  .hero-collage img:nth-child(n + 10) {
+    display: none;
+  }
 }
 @media (max-width: 560px) {
+  /* 2 columns × 3 rows = 6 tiles, big enough to actually see the dogs */
   .hero-collage {
     grid-template-columns: repeat(2, 1fr);
   }
+  .hero-collage img:nth-child(n + 7) {
+    display: none;
+  }
   .hero {
-    min-height: 82vh;
+    min-height: 78vh;
   }
 }
 @media (max-width: 860px) {
