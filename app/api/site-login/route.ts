@@ -29,7 +29,8 @@ export async function POST(req: Request) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
+    // No maxAge/expires → session cookie: the gate re-prompts once the
+    // browser is fully closed and reopened.
   });
   return res;
 }

@@ -1,4 +1,8 @@
 :root {
+  /* The site is designed light-only; this stops browsers (e.g. Chrome's
+     auto dark theme) from re-tinting the page and form controls. */
+  color-scheme: light;
+
   /* Original Jeromos logo palette */
   --ink: #343334;
   --fog: #e6ebe8;
@@ -1717,24 +1721,24 @@ footer {
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
-  /* 3 columns × 3 rows = show 9 larger tiles so dogs stay visible */
+  /* 3 columns × 2 rows = 6 larger tiles */
   .hero-collage {
     grid-template-columns: repeat(3, 1fr);
-  }
-  .hero-collage img:nth-child(n + 10) {
-    display: none;
-  }
-}
-@media (max-width: 560px) {
-  /* 2 columns × 3 rows = 6 tiles, big enough to actually see the dogs */
-  .hero-collage {
-    grid-template-columns: repeat(2, 1fr);
   }
   .hero-collage img:nth-child(n + 7) {
     display: none;
   }
+}
+@media (max-width: 560px) {
+  /* 2 columns × 2 rows = 4 big tiles, so each dog is clearly visible */
+  .hero-collage {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hero-collage img:nth-child(n + 5) {
+    display: none;
+  }
   .hero {
-    min-height: 78vh;
+    min-height: 74vh;
   }
 }
 @media (max-width: 860px) {

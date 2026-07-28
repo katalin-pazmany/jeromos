@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   description: "Jeromos Egyesület – kutyamentés és örökbeadás Baján.",
 };
 
+export const viewport = {
+  colorScheme: "light" as const,
+  themeColor: "#c0dece",
+};
+
 export default function RootLayout({
   children,
 }: {
