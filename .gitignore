@@ -1,0 +1,11 @@
+/node_modules
+/.next
+/out
+next-env.d.ts
+*.tsbuildinfo
+
+# local secrets
+.env*.local
+
+# applicant personal data (keep private)
+data/applications.json
