@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import Waves from "./Waves";
 
 const links = [
@@ -10,11 +13,14 @@ const links = [
 ];
 
 export default function SiteHeader() {
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+
   return (
     <>
       <div className="nav-band">
         <header className="wrap nav">
-          <Link className="brand" href="/" aria-label="Jeromos Egyesület főoldal">
+          <Link className="brand" href="/" aria-label="Jeromos Egyesület főoldal" onClick={close}>
             {/* Bigger logo + title */}
             <img className="mark" src="/jeromos_logo.svg" alt="Jeromos Egyesület emblémája" />
             <img
@@ -23,13 +29,26 @@ export default function SiteHeader() {
               alt="Jeromos Állatmentő és Természetvédő Egyesület"
             />
           </Link>
-          <nav className="nav-links">
+
+          <button
+            type="button"
+            className={`nav-toggle ${open ? "open" : ""}`}
+            aria-label="Menü"
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          <nav className={`nav-links ${open ? "open" : ""}`}>
             {links.map((l) => (
-              <Link key={l.href} href={l.href}>
+              <Link key={l.href} href={l.href} onClick={close}>
                 {l.label}
               </Link>
             ))}
-            <Link className="button solid" href="/segitseg">
+            <Link className="button solid" href="/segitseg" onClick={close}>
               Segítek
             </Link>
           </nav>
