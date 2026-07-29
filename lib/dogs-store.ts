@@ -75,6 +75,35 @@ export async function addDog(dog: Dog): Promise<void> {
   `;
 }
 
+/** Full update of every editable field, keyed by the (unchanged) slug. */
+export async function updateDog(
+  slug: string,
+  dog: Omit<Dog, "slug">
+): Promise<Dog | undefined> {
+  const rows = (await sql`
+    UPDATE dogs SET
+      name = ${dog.name},
+      image = ${dog.image},
+      photo_alt = ${dog.photoAlt},
+      sex = ${dog.sex},
+      age_years = ${dog.ageYears},
+      age_group = ${dog.ageGroup},
+      size = ${dog.size},
+      energy = ${dog.energy},
+      breed = ${dog.breed},
+      traits = ${dog.traits},
+      good_with_gyerek = ${dog.goodWith.gyerek},
+      good_with_kutya = ${dog.goodWith.kutya},
+      good_with_macska = ${dog.goodWith.macska},
+      status = ${dog.status},
+      tagline = ${dog.tagline},
+      story = ${dog.story}
+    WHERE slug = ${slug}
+    RETURNING *
+  `) as DogRow[];
+  return rows[0] ? rowToDog(rows[0]) : undefined;
+}
+
 export async function deleteDog(slug: string): Promise<Dog | undefined> {
   const rows = (await sql`DELETE FROM dogs WHERE slug = ${slug} RETURNING *`) as DogRow[];
   return rows[0] ? rowToDog(rows[0]) : undefined;

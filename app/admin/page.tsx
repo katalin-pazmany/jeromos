@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Dog } from "@/data/dogs";
 import PasswordInput from "@/components/PasswordInput";
 
@@ -15,6 +15,12 @@ const triOptions = [
   { value: "nem", label: "Nem" },
 ];
 
+function triDefault(value: boolean | null): string {
+  if (value === true) return "igen";
+  if (value === false) return "nem";
+  return "ismeretlen";
+}
+
 export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
@@ -24,6 +30,12 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [editingSlug, setEditingSlug] = useState<string | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  const editingDog = editingSlug
+    ? dogs.find((d) => d.slug === editingSlug) ?? null
+    : null;
 
   // Check the httpOnly session cookie on load.
   useEffect(() => {
@@ -70,14 +82,30 @@ export default function AdminPage() {
     setAuthed(false);
   }
 
-  async function handleAdd(e: React.FormEvent<HTMLFormElement>) {
+  function startEdit(slug: string) {
+    setError("");
+    setNotice("");
+    setEditingSlug(slug);
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function cancelEdit() {
+    setEditingSlug(null);
+    setError("");
+    setNotice("");
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setNotice("");
     setLoading(true);
     const formEl = e.currentTarget;
     const form = new FormData(formEl);
-    const res = await fetch("/api/dogs", { method: "POST", body: form });
+
+    const url = editingSlug ? `/api/dogs/${editingSlug}` : "/api/dogs";
+    const method = editingSlug ? "PATCH" : "POST";
+    const res = await fetch(url, { method, body: form });
     setLoading(false);
     if (res.status === 401) {
       setError("A munkamenet lejárt — jelentkezz be újra.");
@@ -90,8 +118,8 @@ export default function AdminPage() {
       return;
     }
     const dog = (await res.json()) as Dog;
-    setNotice(`„${dog.name}” hozzáadva.`);
-    formEl.reset();
+    setNotice(editingSlug ? `„${dog.name}” mentve.` : `„${dog.name}” hozzáadva.`);
+    setEditingSlug(null);
     loadDogs();
   }
 
@@ -109,6 +137,7 @@ export default function AdminPage() {
       setError("Nem sikerült törölni.");
       return;
     }
+    if (editingSlug === slug) setEditingSlug(null);
     setNotice(`„${name}” törölve.`);
     loadDogs();
   }
@@ -167,22 +196,26 @@ export default function AdminPage() {
       {error && <div className="admin-alert error">{error}</div>}
       {notice && <div className="admin-alert ok">{notice}</div>}
 
-      {/* Add form */}
-      <section className="admin-card">
-        <h2>Új kutya felvétele</h2>
-        <form onSubmit={handleAdd} className="admin-form">
+      {/* Add / edit form */}
+      <section className="admin-card" ref={formRef}>
+        <h2>{editingDog ? `Szerkesztés: ${editingDog.name}` : "Új kutya felvétele"}</h2>
+        <form
+          key={editingSlug ?? "new"}
+          onSubmit={handleSubmit}
+          className="admin-form"
+        >
           <div className="field">
             <label>Név *</label>
-            <input name="name" required placeholder="pl. Bodri" />
+            <input name="name" required placeholder="pl. Bodri" defaultValue={editingDog?.name} />
           </div>
           <div className="field">
             <label>Fajta</label>
-            <input name="breed" placeholder="pl. keverék" />
+            <input name="breed" placeholder="pl. keverék" defaultValue={editingDog?.breed} />
           </div>
 
           <div className="field">
             <label>Nem</label>
-            <select name="sex" defaultValue="kan">
+            <select name="sex" defaultValue={editingDog?.sex ?? "kan"}>
               {sexes.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -190,11 +223,17 @@ export default function AdminPage() {
           </div>
           <div className="field">
             <label>Kor (év)</label>
-            <input name="ageYears" type="number" min="0" step="1" defaultValue={2} />
+            <input
+              name="ageYears"
+              type="number"
+              min="0"
+              step="1"
+              defaultValue={editingDog?.ageYears ?? 2}
+            />
           </div>
           <div className="field">
             <label>Korosztály</label>
-            <select name="ageGroup" defaultValue="felnőtt">
+            <select name="ageGroup" defaultValue={editingDog?.ageGroup ?? "felnőtt"}>
               {ageGroups.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -202,7 +241,7 @@ export default function AdminPage() {
           </div>
           <div className="field">
             <label>Méret</label>
-            <select name="size" defaultValue="közepes">
+            <select name="size" defaultValue={editingDog?.size ?? "közepes"}>
               {sizes.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -210,7 +249,7 @@ export default function AdminPage() {
           </div>
           <div className="field">
             <label>Energia</label>
-            <select name="energy" defaultValue="kiegyensúlyozott">
+            <select name="energy" defaultValue={editingDog?.energy ?? "kiegyensúlyozott"}>
               {energies.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -218,7 +257,7 @@ export default function AdminPage() {
           </div>
           <div className="field">
             <label>Státusz</label>
-            <select name="status" defaultValue="gazdit keres">
+            <select name="status" defaultValue={editingDog?.status ?? "gazdit keres"}>
               {statuses.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -227,7 +266,7 @@ export default function AdminPage() {
 
           <div className="field">
             <label>Összefér gyerekkel</label>
-            <select name="goodKids" defaultValue="ismeretlen">
+            <select name="goodKids" defaultValue={triDefault(editingDog?.goodWith.gyerek ?? null)}>
               {triOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
@@ -235,7 +274,7 @@ export default function AdminPage() {
           </div>
           <div className="field">
             <label>Összefér kutyával</label>
-            <select name="goodDogs" defaultValue="ismeretlen">
+            <select name="goodDogs" defaultValue={triDefault(editingDog?.goodWith.kutya ?? null)}>
               {triOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
@@ -243,7 +282,7 @@ export default function AdminPage() {
           </div>
           <div className="field">
             <label>Összefér macskával</label>
-            <select name="goodCats" defaultValue="ismeretlen">
+            <select name="goodCats" defaultValue={triDefault(editingDog?.goodWith.macska ?? null)}>
               {triOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
@@ -252,25 +291,51 @@ export default function AdminPage() {
 
           <div className="field full">
             <label>Tulajdonságok (vesszővel elválasztva)</label>
-            <input name="traits" placeholder="barátságos, játékos, okos" />
+            <input
+              name="traits"
+              placeholder="barátságos, játékos, okos"
+              defaultValue={editingDog?.traits.join(", ")}
+            />
           </div>
           <div className="field full">
             <label>Rövid mottó</label>
-            <input name="tagline" placeholder="pl. Örökmozgó, ölelnivaló csibész." />
+            <input
+              name="tagline"
+              placeholder="pl. Örökmozgó, ölelnivaló csibész."
+              defaultValue={editingDog?.tagline}
+            />
           </div>
           <div className="field full">
             <label>Leírás</label>
-            <textarea name="story" rows={4} placeholder="Néhány mondat a kutyusról..." />
+            <textarea
+              name="story"
+              rows={4}
+              placeholder="Néhány mondat a kutyusról..."
+              defaultValue={editingDog?.story}
+            />
           </div>
           <div className="field full">
-            <label>Fénykép</label>
+            <label>Fénykép{editingDog ? " (hagyd üresen, ha nem cseréled le)" : ""}</label>
+            {editingDog && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={editingDog.image}
+                alt={editingDog.name}
+                style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 10, marginBottom: 8 }}
+              />
+            )}
             <input name="image" type="file" accept="image/*" />
           </div>
 
-          <div className="field full">
+          <div className="field full" style={{ display: "flex", gap: 10 }}>
             <button type="submit" className="button solid" disabled={loading}>
-              {loading ? "Mentés..." : "Kutya hozzáadása"}
+              {loading ? "Mentés..." : editingDog ? "Mentés" : "Kutya hozzáadása"}
             </button>
+            {editingDog && (
+              <button type="button" className="button" onClick={cancelEdit}>
+                Mégse
+              </button>
+            )}
           </div>
         </form>
       </section>
@@ -289,6 +354,9 @@ export default function AdminPage() {
                   {dog.ageGroup} · {dog.sex} · {dog.size} · {dog.energy}
                 </span>
               </div>
+              <button className="button" onClick={() => startEdit(dog.slug)}>
+                Szerkesztés
+              </button>
               <button
                 className="button danger"
                 onClick={() => handleDelete(dog.slug, dog.name)}
