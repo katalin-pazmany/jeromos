@@ -3,15 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { getAllDogs, getDogBySlug } from "@/lib/dogs-store";
+import { getDogBySlug } from "@/lib/dogs-store";
 import { formatAge, type GoodWith } from "@/data/dogs";
 
 export const dynamic = "force-dynamic";
 
-export async function generateStaticParams() {
-  const dogs = await getAllDogs();
-  return dogs.map((d) => ({ slug: d.slug }));
-}
+// No generateStaticParams: the dog list changes at runtime via the admin
+// panel, so there's nothing meaningful to precompute at build time. Every
+// slug renders on demand instead (dynamicParams defaults to true).
 
 export async function generateMetadata({
   params,
