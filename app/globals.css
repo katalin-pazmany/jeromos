@@ -1335,6 +1335,12 @@ h2 {
     display: none;
   }
 }
+
+.help-request-form {
+  grid-template-columns: 1fr;
+  max-width: 640px;
+  gap: 16px;
+}
 .admin-login .button {
   cursor: pointer;
 }
@@ -1557,6 +1563,16 @@ h2 {
 
 .help-block {
   margin-bottom: 44px;
+  scroll-margin-top: 20px;
+}
+.help-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 48px;
+}
+.help-nav a.chip {
+  text-decoration: none;
 }
 .help-block h2 {
   font-size: clamp(28px, 3.4vw, 42px);

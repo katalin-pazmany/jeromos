@@ -34,3 +34,17 @@ CREATE TABLE IF NOT EXISTS applications (
   intro       TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS applications_created_at_idx ON applications (created_at DESC);
+
+-- help_requests is also created lazily by lib/help-store.ts on first submit —
+-- this definition is kept here only for reference.
+CREATE TABLE IF NOT EXISTS help_requests (
+  id            TEXT PRIMARY KEY,
+  created_at    TIMESTAMPTZ NOT NULL,
+  category      TEXT NOT NULL,
+  name          TEXT NOT NULL,
+  email         TEXT NOT NULL,
+  phone         TEXT NOT NULL,
+  availability  TEXT NOT NULL DEFAULT '',
+  message       TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS help_requests_created_at_idx ON help_requests (created_at DESC);
