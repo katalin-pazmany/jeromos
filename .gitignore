@@ -16,3 +16,6 @@ data/applications.json
 /collage
 /jeromos_logo.svg
 /jeromos_title.svg
+
+.vercel
+.env*

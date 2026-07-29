@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-import {
-  getAllDogs,
-  addDog,
-  uniqueSlug,
-  DOGS_IMAGE_DIR,
-} from "@/lib/dogs-store";
+import { put } from "@vercel/blob";
+import { getAllDogs, addDog, uniqueSlug } from "@/lib/dogs-store";
 import { isAuthed, unauthorized } from "@/lib/admin-auth";
 import type {
   Dog,
@@ -56,9 +50,12 @@ export async function POST(request: Request) {
       );
     }
     const bytes = Buffer.from(await file.arrayBuffer());
-    await fs.mkdir(DOGS_IMAGE_DIR, { recursive: true });
-    await fs.writeFile(path.join(DOGS_IMAGE_DIR, `${slug}.${ext}`), bytes);
-    image = `/dogs/${slug}.${ext}`;
+    const blob = await put(`dogs/${slug}.${ext}`, bytes, {
+      access: "public",
+      addRandomSuffix: false,
+      contentType: file.type || undefined,
+    });
+    image = blob.url;
   }
 
   const traits = String(form.get("traits") ?? "")

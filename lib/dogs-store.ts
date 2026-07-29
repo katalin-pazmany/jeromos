@@ -1,54 +1,83 @@
-// Server-side data store for dogs. The live data lives in data/dogs.json;
-// on first access it is seeded from seedDogs (data/dogs.ts).
-//
-// NOTE: this file-based store is intended for local / self-hosted use with
-// `next dev` or `next start`. It is not suitable for serverless hosting
-// (read-only filesystem). Only import it from server code (route handlers /
-// server components), never from a client component.
+// Server-side data store for dogs, backed by Postgres (Neon, via lib/db.ts).
+// Only import this from server code (route handlers / server components),
+// never from a client component.
 
-import { promises as fs } from "fs";
-import path from "path";
-import { seedDogs, type Dog } from "@/data/dogs";
+import { sql } from "@/lib/db";
+import type { Dog } from "@/data/dogs";
 
-const DATA_PATH = path.join(process.cwd(), "data", "dogs.json");
-export const DOGS_IMAGE_DIR = path.join(process.cwd(), "public", "dogs");
+type DogRow = {
+  slug: string;
+  name: string;
+  image: string;
+  photo_alt: string;
+  sex: string;
+  age_years: number;
+  age_group: string;
+  size: string;
+  energy: string;
+  breed: string;
+  traits: string[];
+  good_with_gyerek: boolean | null;
+  good_with_kutya: boolean | null;
+  good_with_macska: boolean | null;
+  status: string;
+  tagline: string;
+  story: string;
+};
 
-async function ensureFile(): Promise<void> {
-  try {
-    await fs.access(DATA_PATH);
-  } catch {
-    await fs.writeFile(DATA_PATH, JSON.stringify(seedDogs, null, 2), "utf8");
-  }
+function rowToDog(r: DogRow): Dog {
+  return {
+    slug: r.slug,
+    name: r.name,
+    image: r.image,
+    photoAlt: r.photo_alt,
+    sex: r.sex as Dog["sex"],
+    ageYears: r.age_years,
+    ageGroup: r.age_group as Dog["ageGroup"],
+    size: r.size as Dog["size"],
+    energy: r.energy as Dog["energy"],
+    breed: r.breed,
+    traits: r.traits,
+    goodWith: {
+      gyerek: r.good_with_gyerek,
+      kutya: r.good_with_kutya,
+      macska: r.good_with_macska,
+    },
+    status: r.status as Dog["status"],
+    tagline: r.tagline,
+    story: r.story,
+  };
 }
 
 export async function getAllDogs(): Promise<Dog[]> {
-  await ensureFile();
-  const raw = await fs.readFile(DATA_PATH, "utf8");
-  return JSON.parse(raw) as Dog[];
+  const rows = (await sql`SELECT * FROM dogs ORDER BY sort_order ASC`) as DogRow[];
+  return rows.map(rowToDog);
 }
 
 export async function getDogBySlug(slug: string): Promise<Dog | undefined> {
-  const dogs = await getAllDogs();
-  return dogs.find((d) => d.slug === slug);
-}
-
-export async function saveAllDogs(dogs: Dog[]): Promise<void> {
-  await fs.writeFile(DATA_PATH, JSON.stringify(dogs, null, 2), "utf8");
+  const rows = (await sql`SELECT * FROM dogs WHERE slug = ${slug} LIMIT 1`) as DogRow[];
+  return rows[0] ? rowToDog(rows[0]) : undefined;
 }
 
 export async function addDog(dog: Dog): Promise<void> {
-  const dogs = await getAllDogs();
-  dogs.unshift(dog);
-  await saveAllDogs(dogs);
+  await sql`
+    INSERT INTO dogs (
+      slug, name, image, photo_alt, sex, age_years, age_group, size, energy, breed,
+      traits, good_with_gyerek, good_with_kutya, good_with_macska, status, tagline, story,
+      sort_order
+    ) VALUES (
+      ${dog.slug}, ${dog.name}, ${dog.image}, ${dog.photoAlt}, ${dog.sex}, ${dog.ageYears},
+      ${dog.ageGroup}, ${dog.size}, ${dog.energy}, ${dog.breed}, ${dog.traits},
+      ${dog.goodWith.gyerek}, ${dog.goodWith.kutya}, ${dog.goodWith.macska}, ${dog.status},
+      ${dog.tagline}, ${dog.story},
+      (SELECT COALESCE(MIN(sort_order), 1) - 1 FROM dogs)
+    )
+  `;
 }
 
 export async function deleteDog(slug: string): Promise<Dog | undefined> {
-  const dogs = await getAllDogs();
-  const idx = dogs.findIndex((d) => d.slug === slug);
-  if (idx === -1) return undefined;
-  const [removed] = dogs.splice(idx, 1);
-  await saveAllDogs(dogs);
-  return removed;
+  const rows = (await sql`DELETE FROM dogs WHERE slug = ${slug} RETURNING *`) as DogRow[];
+  return rows[0] ? rowToDog(rows[0]) : undefined;
 }
 
 const CHAR_MAP: Record<string, string> = {
@@ -66,8 +95,8 @@ export function slugify(name: string): string {
 
 /** Return a slug that is not already taken. */
 export async function uniqueSlug(name: string): Promise<string> {
-  const dogs = await getAllDogs();
-  const taken = new Set(dogs.map((d) => d.slug));
+  const rows = (await sql`SELECT slug FROM dogs`) as { slug: string }[];
+  const taken = new Set(rows.map((r) => r.slug));
   const base = slugify(name);
   if (!taken.has(base)) return base;
   let i = 2;

@@ -1,7 +1,4 @@
-import { promises as fs } from "fs";
-import path from "path";
-
-const DATA_PATH = path.join(process.cwd(), "data", "applications.json");
+import { sql } from "@/lib/db";
 
 export interface Application {
   id: string;
@@ -16,15 +13,14 @@ export interface Application {
   intro: string;
 }
 
-// Keep a local copy of every application so nothing is lost even if email
-// delivery isn't configured. This file holds personal data — keep it private.
+// Keep a record of every application so nothing is lost even if email
+// delivery isn't configured. Contains personal data — keep it private.
 export async function saveApplication(app: Application): Promise<void> {
-  let list: Application[] = [];
-  try {
-    list = JSON.parse(await fs.readFile(DATA_PATH, "utf8"));
-  } catch {
-    list = [];
-  }
-  list.unshift(app);
-  await fs.writeFile(DATA_PATH, JSON.stringify(list, null, 2), "utf8");
+  await sql`
+    INSERT INTO applications (id, created_at, name, email, phone, city, garden, other_pets, dog, intro)
+    VALUES (
+      ${app.id}, ${app.createdAt}, ${app.name}, ${app.email}, ${app.phone}, ${app.city},
+      ${app.garden}, ${app.otherPets}, ${app.dog}, ${app.intro}
+    )
+  `;
 }
