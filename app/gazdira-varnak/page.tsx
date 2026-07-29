@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "@/components/PageShell";
-import DogCard from "@/components/DogCard";
+import DogFilters from "@/components/DogFilters";
 import { getAllDogs } from "@/lib/dogs-store";
 
 export const metadata: Metadata = {
@@ -18,17 +18,13 @@ export default async function GazdiraVarnak() {
       title="Gazdira várnak"
       lead="Ismerd meg mentett kutyáinkat. Kattints bármelyikre a részletes profilért — talán épp közöttük van a te új társad."
     >
-      <div className="cards">
-        {dogs.map((dog) => (
-          <DogCard key={dog.slug} dog={dog} />
-        ))}
-      </div>
-
-      <p style={{ marginTop: 40, textAlign: "center" }}>
+      <p style={{ textAlign: "center", marginBottom: 36 }}>
         <Link className="button solid" href="/osszeparosito">
           Nem tudod, melyik illik hozzád? Indítsd az összepárosítót →
         </Link>
       </p>
+
+      <DogFilters dogs={dogs} />
     </PageShell>
   );
 }
