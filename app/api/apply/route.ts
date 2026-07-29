@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getTransport, mailFrom, SHELTER_EMAIL } from "@/lib/mailer";
+import { sendMail, SHELTER_EMAIL } from "@/lib/mailer";
 import { saveApplication } from "@/lib/applications-store";
 import { getDogBySlug } from "@/lib/dogs-store";
 
@@ -73,20 +73,9 @@ export async function POST(request: Request) {
   }
 
   // Try to actually send the email if credentials are configured.
-  const transport = getTransport();
-  if (transport) {
-    try {
-      await transport.sendMail({
-        from: mailFrom(),
-        to: SHELTER_EMAIL,
-        replyTo: email,
-        subject,
-        text,
-      });
-      return NextResponse.json({ ok: true, delivered: true });
-    } catch {
-      // fall through to the mailto fallback
-    }
+  const delivered = await sendMail({ replyTo: email, subject, text });
+  if (delivered) {
+    return NextResponse.json({ ok: true, delivered: true });
   }
 
   // Fallback: hand back a mailto: link the browser can open, so the applicant

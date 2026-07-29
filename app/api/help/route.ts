@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getTransport, mailFrom, SHELTER_EMAIL } from "@/lib/mailer";
+import { sendMail, SHELTER_EMAIL } from "@/lib/mailer";
 import { saveHelpRequest } from "@/lib/help-store";
 import { HELP_CATEGORIES, type HelpCategory } from "@/lib/help-categories";
 
@@ -70,20 +70,9 @@ export async function POST(request: Request) {
   }
 
   // Try to actually send the email if credentials are configured.
-  const transport = getTransport();
-  if (transport) {
-    try {
-      await transport.sendMail({
-        from: mailFrom(),
-        to: SHELTER_EMAIL,
-        replyTo: email,
-        subject,
-        text,
-      });
-      return NextResponse.json({ ok: true, delivered: true });
-    } catch {
-      // fall through to the mailto fallback
-    }
+  const delivered = await sendMail({ replyTo: email, subject, text });
+  if (delivered) {
+    return NextResponse.json({ ok: true, delivered: true });
   }
 
   const mailto = `mailto:${SHELTER_EMAIL}?subject=${encodeURIComponent(
