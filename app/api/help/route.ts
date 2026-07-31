@@ -3,6 +3,7 @@ import { sendMail, SHELTER_EMAIL } from "@/lib/mailer";
 import { saveHelpRequest, getAllHelpRequests } from "@/lib/help-store";
 import { HELP_CATEGORIES, type HelpCategory } from "@/lib/help-categories";
 import { isAuthed, unauthorized } from "@/lib/admin-auth";
+import { checkSpam } from "@/lib/spam-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,17 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
+
+  const spam = await checkSpam("help", body);
+  if (spam.blocked) {
+    if (spam.reason === "rate-limited") {
+      return NextResponse.json(
+        { ok: false, error: "Túl sok próbálkozás. Kérjük, próbáld újra később." },
+        { status: 429 }
+      );
+    }
+    return NextResponse.json({ ok: true, delivered: true });
+  }
 
   const category = clean(body.category) as HelpCategory;
   const name = clean(body.name);

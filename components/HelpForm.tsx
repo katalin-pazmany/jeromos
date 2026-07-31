@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { HELP_CATEGORIES, type HelpCategory } from "@/lib/help-categories";
+import SpamGuardFields from "./SpamGuardFields";
 
 export default function HelpForm({ preselect = "" }: { preselect?: string }) {
   const [submitting, setSubmitting] = useState(false);
@@ -55,6 +56,7 @@ export default function HelpForm({ preselect = "" }: { preselect?: string }) {
 
   return (
     <form className="appform help-request-form" onSubmit={handleSubmit}>
+      <SpamGuardFields />
       {error && <div className="admin-alert error field full">{error}</div>}
 
       <div className="field">

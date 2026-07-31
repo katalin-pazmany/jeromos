@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import SpamGuardFields from "./SpamGuardFields";
 
 type DogOption = {
   slug: string;
@@ -75,6 +76,7 @@ export default function ApplicationForm({
 
   return (
     <form className="appform" onSubmit={handleSubmit}>
+      <SpamGuardFields />
       {error && (
         <div className="admin-alert error field full">{error}</div>
       )}

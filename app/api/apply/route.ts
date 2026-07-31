@@ -3,6 +3,7 @@ import { sendMail, SHELTER_EMAIL } from "@/lib/mailer";
 import { saveApplication, getAllApplications } from "@/lib/applications-store";
 import { getDogBySlug } from "@/lib/dogs-store";
 import { isAuthed, unauthorized } from "@/lib/admin-auth";
+import { checkSpam } from "@/lib/spam-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,18 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
+
+  const spam = await checkSpam("apply", body);
+  if (spam.blocked) {
+    if (spam.reason === "rate-limited") {
+      return NextResponse.json(
+        { ok: false, error: "Túl sok próbálkozás. Kérjük, próbáld újra később." },
+        { status: 429 }
+      );
+    }
+    // Honeypot / too-fast: pretend success so bots don't learn to adapt.
+    return NextResponse.json({ ok: true, delivered: true });
+  }
 
   const name = clean(body.name);
   const email = clean(body.email);
