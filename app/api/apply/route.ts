@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import { sendMail, SHELTER_EMAIL } from "@/lib/mailer";
-import { saveApplication } from "@/lib/applications-store";
+import { saveApplication, getAllApplications } from "@/lib/applications-store";
 import { getDogBySlug } from "@/lib/dogs-store";
+import { isAuthed, unauthorized } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
 function clean(value: unknown): string {
   return String(value ?? "").trim();
+}
+
+export async function GET() {
+  if (!(await isAuthed())) return unauthorized();
+  const applications = await getAllApplications();
+  return NextResponse.json(applications);
 }
 
 export async function POST(request: Request) {

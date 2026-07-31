@@ -5,6 +5,10 @@ import Image from "next/image";
 import type { Dog } from "@/data/dogs";
 import PasswordInput from "@/components/PasswordInput";
 import SiteHeader from "@/components/SiteHeader";
+import ApplicationsPanel from "@/components/admin/ApplicationsPanel";
+import HelpRequestsPanel from "@/components/admin/HelpRequestsPanel";
+
+type Tab = "kutyak" | "jelentkezesek" | "segitseg";
 
 const sizes = ["kicsi", "közepes", "nagy"];
 const energies = ["nyugodt", "kiegyensúlyozott", "energikus"];
@@ -33,7 +37,13 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>("kutyak");
   const formRef = useRef<HTMLDivElement>(null);
+
+  function sessionExpired() {
+    setError("A munkamenet lejárt — jelentkezz be újra.");
+    setAuthed(false);
+  }
 
   const editingDog = editingSlug
     ? dogs.find((d) => d.slug === editingSlug) ?? null
@@ -197,7 +207,7 @@ export default function AdminPage() {
       <main id="main-content" className="admin-wrap">
       <div className="admin-head">
         <div>
-          <h1>Kutyák kezelése</h1>
+          <h1>Admin felület</h1>
           <p className="admin-sub">{dogs.length} kutya az adatbázisban.</p>
         </div>
         <button className="button" onClick={logout}>
@@ -205,9 +215,46 @@ export default function AdminPage() {
         </button>
       </div>
 
+      <div className="admin-tabs">
+        <button
+          className={`admin-tab${tab === "kutyak" ? " active" : ""}`}
+          onClick={() => setTab("kutyak")}
+        >
+          Kutyák
+        </button>
+        <button
+          className={`admin-tab${tab === "jelentkezesek" ? " active" : ""}`}
+          onClick={() => setTab("jelentkezesek")}
+        >
+          Örökbefogadási jelentkezések
+        </button>
+        <button
+          className={`admin-tab${tab === "segitseg" ? " active" : ""}`}
+          onClick={() => setTab("segitseg")}
+        >
+          Segítségkérések
+        </button>
+      </div>
+
       {error && <div className="admin-alert error">{error}</div>}
       {notice && <div className="admin-alert ok">{notice}</div>}
 
+      {tab === "jelentkezesek" && (
+        <section className="admin-card">
+          <h2>Örökbefogadási jelentkezések</h2>
+          <ApplicationsPanel onSessionExpired={sessionExpired} />
+        </section>
+      )}
+
+      {tab === "segitseg" && (
+        <section className="admin-card">
+          <h2>Segítségkérések</h2>
+          <HelpRequestsPanel onSessionExpired={sessionExpired} />
+        </section>
+      )}
+
+      {tab === "kutyak" && (
+      <>
       {/* Add / edit form */}
       <section className="admin-card" ref={formRef}>
         <h2>{editingDog ? `Szerkesztés: ${editingDog.name}` : "Új kutya felvétele"}</h2>
@@ -384,6 +431,8 @@ export default function AdminPage() {
           {dogs.length === 0 && <p>Még nincs felvett kutya.</p>}
         </div>
       </section>
+      </>
+      )}
       </main>
     </>
   );

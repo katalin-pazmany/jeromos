@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import { sendMail, SHELTER_EMAIL } from "@/lib/mailer";
-import { saveHelpRequest } from "@/lib/help-store";
+import { saveHelpRequest, getAllHelpRequests } from "@/lib/help-store";
 import { HELP_CATEGORIES, type HelpCategory } from "@/lib/help-categories";
+import { isAuthed, unauthorized } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
 function clean(value: unknown): string {
   return String(value ?? "").trim();
+}
+
+export async function GET() {
+  if (!(await isAuthed())) return unauthorized();
+  const helpRequests = await getAllHelpRequests();
+  return NextResponse.json(helpRequests);
 }
 
 export async function POST(request: Request) {
