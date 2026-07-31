@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 
-export const metadata: Metadata = { title: "Tanácsok | Jeromos Egyesület" };
+export const metadata: Metadata = {
+  title: "Tanácsok | Jeromos Egyesület",
+  description:
+    "Gyakorlati tanácsok friss gazdiknak: hogyan segítsd az első napokat, a beszoktatást és a mindennapokat, hogy kutyád gyorsan otthon érezze magát nálad.",
+};
 
 const tips = [
   { h: "Az első napok", p: "Adj időt és nyugalmat: az új kutyának napokra lehet szüksége, hogy otthon érezze magát." },
@@ -20,7 +24,7 @@ export default function Tanacsok() {
       <ul className="list">
         {tips.map((t) => (
           <li key={t.h} style={{ borderBottom: "1px solid var(--line)", padding: "14px 0" }}>
-            <b style={{ fontFamily: "Fraunces, serif", fontSize: 19 }}>{t.h}</b>
+            <b style={{ fontFamily: '"Poppins", sans-serif', fontSize: 19 }}>{t.h}</b>
             <div style={{ color: "var(--copy)", fontWeight: 400 }}>{t.p}</div>
           </li>
         ))}

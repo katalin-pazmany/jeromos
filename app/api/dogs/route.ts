@@ -38,6 +38,7 @@ export async function POST(request: Request) {
     const blob = await put(`dogs/${slug}.${ext}`, bytes, {
       access: "public",
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: file.type || undefined,
     });
     image = blob.url;

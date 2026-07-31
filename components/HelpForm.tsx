@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { HELP_CATEGORIES, type HelpCategory } from "@/lib/help-categories";
 
 export default function HelpForm({ preselect = "" }: { preselect?: string }) {
@@ -57,8 +58,9 @@ export default function HelpForm({ preselect = "" }: { preselect?: string }) {
       {error && <div className="admin-alert error field full">{error}</div>}
 
       <div className="field">
-        <label>Hogyan szeretnél segíteni? *</label>
+        <label htmlFor="category">Hogyan szeretnél segíteni? *</label>
         <select
+          id="category"
           name="category"
           required
           value={category}
@@ -77,23 +79,24 @@ export default function HelpForm({ preselect = "" }: { preselect?: string }) {
 
       <div className="apply-row">
         <div className="field">
-          <label>Neved *</label>
-          <input name="name" required placeholder="Teljes név" />
+          <label htmlFor="name">Neved *</label>
+          <input id="name" name="name" required placeholder="Teljes név" />
         </div>
         <div className="field">
-          <label>E-mail *</label>
-          <input name="email" type="email" required placeholder="pl. neved@email.hu" />
+          <label htmlFor="email">E-mail *</label>
+          <input id="email" name="email" type="email" required placeholder="pl. neved@email.hu" />
         </div>
       </div>
 
       <div className="apply-row">
         <div className="field">
-          <label>Telefonszám (opcionális)</label>
-          <input name="phone" placeholder="+36 ..." />
+          <label htmlFor="phone">Telefonszám (opcionális)</label>
+          <input id="phone" name="phone" placeholder="+36 ..." />
         </div>
         <div className="field">
-          <label>Mikor érnél rá segíteni? (opcionális)</label>
+          <label htmlFor="availability">Mikor érnél rá segíteni? (opcionális)</label>
           <input
+            id="availability"
             name="availability"
             placeholder="pl. hétvégenként, vagy hét közben este"
           />
@@ -101,9 +104,10 @@ export default function HelpForm({ preselect = "" }: { preselect?: string }) {
       </div>
 
       <div className="field">
-        <label>Üzenet, leírás *</label>
+        <label htmlFor="message">Üzenet, leírás *</label>
         <div className="bubble">
           <textarea
+            id="message"
             name="message"
             required
             rows={5}
@@ -111,6 +115,12 @@ export default function HelpForm({ preselect = "" }: { preselect?: string }) {
           />
         </div>
       </div>
+
+      <p className="form-privacy-note">
+        A küldéssel elfogadod, hogy a megadott adataidat az üzeneted
+        feldolgozásához kezeljük — bővebben az{" "}
+        <Link href="/adatvedelem">adatvédelmi tájékoztatóban</Link>.
+      </p>
 
       <button type="submit" className="button solid" disabled={submitting}>
         {submitting ? "Küldés..." : "Küldés"}

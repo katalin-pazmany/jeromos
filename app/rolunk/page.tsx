@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 
-export const metadata: Metadata = { title: "Rólunk | Jeromos Egyesület" };
+export const metadata: Metadata = {
+  title: "Rólunk | Jeromos Egyesület",
+  description:
+    "Ismerd meg a Jeromos Egyesületet: Baja és környéke gazdátlan, sérült vagy bajba került kutyáiért dolgozunk 2020 óta, hogy mindegyikük hazatalálhasson.",
+};
 
 const koret = [
   "Baja",

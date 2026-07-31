@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 type DogOption = {
   slug: string;
@@ -80,8 +82,9 @@ export default function ApplicationForm({
       {/* LEFT: the chosen dog */}
       <aside className="apply-dog">
         <div className="field">
-          <label>Melyik kutyára jelentkezel? *</label>
+          <label htmlFor="dog">Melyik kutyára jelentkezel? *</label>
           <select
+            id="dog"
             name="dog"
             required
             value={dogSlug}
@@ -100,8 +103,13 @@ export default function ApplicationForm({
 
         {selectedDog ? (
           <figure className="apply-dog-card">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={selectedDog.image} alt={selectedDog.name} />
+            <Image
+              src={selectedDog.image}
+              alt={selectedDog.name}
+              width={400}
+              height={500}
+              sizes="(max-width: 720px) 100vw, 320px"
+            />
             <figcaption>
               <h3>{selectedDog.name}</h3>
               <div className="apply-dog-tags">
@@ -127,30 +135,30 @@ export default function ApplicationForm({
 
         <div className="apply-row">
           <div className="field">
-            <label>Neved *</label>
-            <input name="name" required placeholder="Teljes név" />
+            <label htmlFor="name">Neved *</label>
+            <input id="name" name="name" required placeholder="Teljes név" />
           </div>
           <div className="field">
-            <label>E-mail *</label>
-            <input name="email" type="email" required placeholder="pl. neved@email.hu" />
-          </div>
-        </div>
-
-        <div className="apply-row">
-          <div className="field">
-            <label>Telefonszám *</label>
-            <input name="phone" required placeholder="+36 ..." />
-          </div>
-          <div className="field">
-            <label>Lakhely (város) *</label>
-            <input name="city" required placeholder="pl. Baja" />
+            <label htmlFor="email">E-mail *</label>
+            <input id="email" name="email" type="email" required placeholder="pl. neved@email.hu" />
           </div>
         </div>
 
         <div className="apply-row">
           <div className="field">
-            <label>Van kerted? *</label>
-            <select name="garden" required defaultValue="">
+            <label htmlFor="phone">Telefonszám *</label>
+            <input id="phone" name="phone" required placeholder="+36 ..." />
+          </div>
+          <div className="field">
+            <label htmlFor="city">Lakhely (város) *</label>
+            <input id="city" name="city" required placeholder="pl. Baja" />
+          </div>
+        </div>
+
+        <div className="apply-row">
+          <div className="field">
+            <label htmlFor="garden">Van kerted? *</label>
+            <select id="garden" name="garden" required defaultValue="">
               <option value="" disabled hidden>
                 — válassz —
               </option>
@@ -159,15 +167,16 @@ export default function ApplicationForm({
             </select>
           </div>
           <div className="field">
-            <label>Van már otthon állatod? *</label>
-            <input name="otherPets" required placeholder="pl. egy kutya, macska nincs" />
+            <label htmlFor="otherPets">Van már otthon állatod? *</label>
+            <input id="otherPets" name="otherPets" required placeholder="pl. egy kutya, macska nincs" />
           </div>
         </div>
 
         <div className="field">
-          <label>Bemutatkozás *</label>
+          <label htmlFor="intro">Bemutatkozás *</label>
           <div className="bubble">
             <textarea
+              id="intro"
               name="intro"
               required
               rows={7}
@@ -175,6 +184,12 @@ export default function ApplicationForm({
             />
           </div>
         </div>
+
+        <p className="form-privacy-note">
+          A küldéssel elfogadod, hogy a megadott adataidat a jelentkezésed
+          feldolgozásához kezeljük — bővebben az{" "}
+          <Link href="/adatvedelem">adatvédelmi tájékoztatóban</Link>.
+        </p>
 
         <button type="submit" className="button solid" disabled={submitting}>
           {submitting ? "Küldés..." : "Jelentkezés elküldése"}

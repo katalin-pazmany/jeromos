@@ -11,7 +11,7 @@
 
 export type Size = "kicsi" | "közepes" | "nagy";
 export type Energy = "nyugodt" | "kiegyensúlyozott" | "energikus";
-export type Sex = "kan" | "szuka" | "vegyes";
+export type Sex = "kan" | "szuka" | "vegyes" | "ismeretlen";
 export type AgeGroup = "kölyök" | "fiatal" | "felnőtt" | "idős";
 export type Status = "gazdit keres" | "ideiglenesen befogadva";
 

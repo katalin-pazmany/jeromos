@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { Dog } from "@/data/dogs";
 import PasswordInput from "@/components/PasswordInput";
+import SiteHeader from "@/components/SiteHeader";
 
 const sizes = ["kicsi", "közepes", "nagy"];
 const energies = ["nyugodt", "kiegyensúlyozott", "energikus"];
-const sexes = ["kan", "szuka", "vegyes"];
+const sexes = ["kan", "szuka", "vegyes", "ismeretlen"];
 const ageGroups = ["kölyök", "fiatal", "felnőtt", "idős"];
 const statuses = ["gazdit keres", "ideiglenesen befogadva"];
 const triOptions = [
@@ -144,45 +146,55 @@ export default function AdminPage() {
 
   if (!ready) {
     return (
-      <main className="admin-wrap">
-        <h1>Kutyák kezelése</h1>
-        <p className="admin-sub">Betöltés…</p>
-      </main>
+      <>
+        <SiteHeader />
+        <main id="main-content" className="admin-wrap">
+          <h1>Kutyák kezelése</h1>
+          <p className="admin-sub">Betöltés…</p>
+        </main>
+      </>
     );
   }
 
   if (!authed) {
     return (
-      <main className="admin-wrap">
-        <h1>Kutyák kezelése</h1>
-        {configured ? (
-          <>
-            <p className="admin-sub">Add meg az admin jelszót a folytatáshoz.</p>
-            {error && <div className="admin-alert error">{error}</div>}
-            <form onSubmit={login} className="admin-login">
-              <PasswordInput
-                value={password}
-                onChange={setPassword}
-                placeholder="Admin jelszó"
-                autoFocus
-              />
-              <button type="submit" className="button solid">
-                Belépés
-              </button>
-            </form>
-          </>
-        ) : (
-          <div className="admin-alert error">
-            Az admin jelszó nincs beállítva. Hozz létre egy <b>.env.local</b>{" "}
-            fájlt az <b>ADMIN_PASSWORD=…</b> sorral, majd indítsd újra a szervert.
-          </div>
-        )}
-      </main>
+      <>
+        <SiteHeader />
+        <main id="main-content" className="admin-wrap">
+          <h1>Kutyák kezelése</h1>
+          {configured ? (
+            <>
+              <p className="admin-sub">Add meg az admin jelszót a folytatáshoz.</p>
+              {error && <div className="admin-alert error">{error}</div>}
+              <form onSubmit={login} className="admin-login">
+                <label htmlFor="admin-password">Admin jelszó</label>
+                <PasswordInput
+                  id="admin-password"
+                  value={password}
+                  onChange={setPassword}
+                  placeholder="Admin jelszó"
+                  autoFocus
+                />
+                <button type="submit" className="button solid">
+                  Belépés
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="admin-alert error">
+              Az admin jelszó nincs beállítva. Hozz létre egy <b>.env.local</b>{" "}
+              fájlt az <b>ADMIN_PASSWORD=…</b> sorral, majd indítsd újra a szervert.
+            </div>
+          )}
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="admin-wrap">
+    <>
+      <SiteHeader />
+      <main id="main-content" className="admin-wrap">
       <div className="admin-head">
         <div>
           <h1>Kutyák kezelése</h1>
@@ -205,25 +217,26 @@ export default function AdminPage() {
           className="admin-form"
         >
           <div className="field">
-            <label>Név *</label>
-            <input name="name" required placeholder="pl. Bodri" defaultValue={editingDog?.name} />
+            <label htmlFor="name">Név *</label>
+            <input id="name" name="name" required placeholder="pl. Bodri" defaultValue={editingDog?.name} />
           </div>
           <div className="field">
-            <label>Fajta</label>
-            <input name="breed" placeholder="pl. keverék" defaultValue={editingDog?.breed} />
+            <label htmlFor="breed">Fajta</label>
+            <input id="breed" name="breed" placeholder="pl. keverék" defaultValue={editingDog?.breed} />
           </div>
 
           <div className="field">
-            <label>Nem</label>
-            <select name="sex" defaultValue={editingDog?.sex ?? "kan"}>
+            <label htmlFor="sex">Nem</label>
+            <select id="sex" name="sex" defaultValue={editingDog?.sex ?? "kan"}>
               {sexes.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
           <div className="field">
-            <label>Kor (év)</label>
+            <label htmlFor="ageYears">Kor (év)</label>
             <input
+              id="ageYears"
               name="ageYears"
               type="number"
               min="0"
@@ -232,32 +245,32 @@ export default function AdminPage() {
             />
           </div>
           <div className="field">
-            <label>Korosztály</label>
-            <select name="ageGroup" defaultValue={editingDog?.ageGroup ?? "felnőtt"}>
+            <label htmlFor="ageGroup">Korosztály</label>
+            <select id="ageGroup" name="ageGroup" defaultValue={editingDog?.ageGroup ?? "felnőtt"}>
               {ageGroups.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
           <div className="field">
-            <label>Méret</label>
-            <select name="size" defaultValue={editingDog?.size ?? "közepes"}>
+            <label htmlFor="size">Méret</label>
+            <select id="size" name="size" defaultValue={editingDog?.size ?? "közepes"}>
               {sizes.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
           <div className="field">
-            <label>Energia</label>
-            <select name="energy" defaultValue={editingDog?.energy ?? "kiegyensúlyozott"}>
+            <label htmlFor="energy">Energia</label>
+            <select id="energy" name="energy" defaultValue={editingDog?.energy ?? "kiegyensúlyozott"}>
               {energies.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
           <div className="field">
-            <label>Státusz</label>
-            <select name="status" defaultValue={editingDog?.status ?? "gazdit keres"}>
+            <label htmlFor="status">Státusz</label>
+            <select id="status" name="status" defaultValue={editingDog?.status ?? "gazdit keres"}>
               {statuses.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -265,24 +278,24 @@ export default function AdminPage() {
           </div>
 
           <div className="field">
-            <label>Összefér gyerekkel</label>
-            <select name="goodKids" defaultValue={triDefault(editingDog?.goodWith.gyerek ?? null)}>
+            <label htmlFor="goodKids">Összefér gyerekkel</label>
+            <select id="goodKids" name="goodKids" defaultValue={triDefault(editingDog?.goodWith.gyerek ?? null)}>
               {triOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
           </div>
           <div className="field">
-            <label>Összefér kutyával</label>
-            <select name="goodDogs" defaultValue={triDefault(editingDog?.goodWith.kutya ?? null)}>
+            <label htmlFor="goodDogs">Összefér kutyával</label>
+            <select id="goodDogs" name="goodDogs" defaultValue={triDefault(editingDog?.goodWith.kutya ?? null)}>
               {triOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
           </div>
           <div className="field">
-            <label>Összefér macskával</label>
-            <select name="goodCats" defaultValue={triDefault(editingDog?.goodWith.macska ?? null)}>
+            <label htmlFor="goodCats">Összefér macskával</label>
+            <select id="goodCats" name="goodCats" defaultValue={triDefault(editingDog?.goodWith.macska ?? null)}>
               {triOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
@@ -290,24 +303,27 @@ export default function AdminPage() {
           </div>
 
           <div className="field full">
-            <label>Tulajdonságok (vesszővel elválasztva)</label>
+            <label htmlFor="traits">Tulajdonságok (vesszővel elválasztva)</label>
             <input
+              id="traits"
               name="traits"
               placeholder="barátságos, játékos, okos"
               defaultValue={editingDog?.traits.join(", ")}
             />
           </div>
           <div className="field full">
-            <label>Rövid mottó</label>
+            <label htmlFor="tagline">Rövid mottó</label>
             <input
+              id="tagline"
               name="tagline"
               placeholder="pl. Örökmozgó, ölelnivaló csibész."
               defaultValue={editingDog?.tagline}
             />
           </div>
           <div className="field full">
-            <label>Leírás</label>
+            <label htmlFor="story">Leírás</label>
             <textarea
+              id="story"
               name="story"
               rows={4}
               placeholder="Néhány mondat a kutyusról..."
@@ -315,16 +331,17 @@ export default function AdminPage() {
             />
           </div>
           <div className="field full">
-            <label>Fénykép{editingDog ? " (hagyd üresen, ha nem cseréled le)" : ""}</label>
+            <label htmlFor="image">Fénykép{editingDog ? " (hagyd üresen, ha nem cseréled le)" : ""}</label>
             {editingDog && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={editingDog.image}
                 alt={editingDog.name}
-                style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 10, marginBottom: 8 }}
+                width={96}
+                height={96}
+                style={{ objectFit: "cover", borderRadius: 10, marginBottom: 8 }}
               />
             )}
-            <input name="image" type="file" accept="image/*" />
+            <input id="image" name="image" type="file" accept="image/*" />
           </div>
 
           <div className="field full" style={{ display: "flex", gap: 10 }}>
@@ -346,8 +363,7 @@ export default function AdminPage() {
         <div className="admin-list">
           {dogs.map((dog) => (
             <div className="admin-row" key={dog.slug}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={dog.image} alt={dog.name} />
+              <Image src={dog.image} alt={dog.name} width={64} height={64} />
               <div className="admin-row-info">
                 <b>{dog.name}</b>
                 <span>
@@ -368,6 +384,7 @@ export default function AdminPage() {
           {dogs.length === 0 && <p>Még nincs felvett kutya.</p>}
         </div>
       </section>
-    </main>
+      </main>
+    </>
   );
 }

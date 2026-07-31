@@ -8,18 +8,21 @@ export default function PasswordInput({
   placeholder,
   autoFocus,
   name,
+  id,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   autoFocus?: boolean;
   name?: string;
+  id?: string;
 }) {
   const [show, setShow] = useState(false);
 
   return (
     <div className="pw-field">
       <input
+        id={id}
         type={show ? "text" : "password"}
         name={name}
         value={value}

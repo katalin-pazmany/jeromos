@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
@@ -51,15 +52,21 @@ export default async function DogProfile({
     <>
       <SiteHeader />
 
-      <main className="content wrap">
+      <main id="main-content" className="content wrap">
         <Link className="text-link" href="/gazdira-varnak">
           ← Vissza a kutyákhoz
         </Link>
 
         <div className="dog-profile">
           <div className="dog-profile-photo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={dog.image} alt={dog.photoAlt} />
+            <Image
+              src={dog.image}
+              alt={dog.photoAlt}
+              width={800}
+              height={560}
+              priority
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
             <span className="tag dog-profile-status">{dog.status}</span>
           </div>
 

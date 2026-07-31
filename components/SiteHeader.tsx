@@ -5,6 +5,7 @@ import { useState } from "react";
 import Waves from "./Waves";
 
 const links = [
+  { href: "/", label: "Főoldal" },
   { href: "/gazdira-varnak", label: "Gazdira várnak" },
   { href: "/osszeparosito", label: "Összepárosító" },
   { href: "/orokbefogadas", label: "Örökbefogadás" },
@@ -18,6 +19,9 @@ export default function SiteHeader() {
 
   return (
     <>
+      <a href="#main-content" className="skip-link">
+        Ugrás a tartalomhoz
+      </a>
       <div className="nav-band">
         <header className="wrap nav">
           <Link className="brand" href="/" aria-label="Jeromos Egyesület főoldal" onClick={close}>

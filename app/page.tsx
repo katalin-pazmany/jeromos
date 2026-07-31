@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -12,17 +13,20 @@ export default async function Home() {
     <>
       <SiteHeader />
 
-      <main id="kezdolap">
+      <main id="main-content">
         {/* Hero – full-screen collage */}
         <section className="hero">
           <div className="hero-collage" aria-hidden="true">
             {Array.from({ length: 18 }, (_, i) => (
-              <img
-                key={i}
-                src={`/collage/c${i + 1}.jpg`}
-                alt=""
-                loading={i < 6 ? "eager" : "lazy"}
-              />
+              <div className="collage-tile" key={i}>
+                <Image
+                  src={`/collage/c${i + 1}.jpg`}
+                  alt=""
+                  fill
+                  sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 17vw"
+                  priority={i < 6}
+                />
+              </div>
             ))}
           </div>
           <div className="hero-shade" aria-hidden="true" />

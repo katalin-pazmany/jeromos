@@ -5,6 +5,8 @@ import AdoptionSteps from "@/components/AdoptionSteps";
 
 export const metadata: Metadata = {
   title: "Örökbefogadás | Jeromos Egyesület",
+  description:
+    "Így zajlik az örökbefogadás lépésről lépésre a Jeromos Egyesületnél: jelentkezés, ismerkedés, papírmunka és hazaköltözés — minden, amit tudnod kell, mielőtt otthont adnál egy kutyusnak.",
 };
 
 export default function Orokbefogadas() {

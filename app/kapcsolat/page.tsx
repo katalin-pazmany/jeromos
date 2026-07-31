@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 
-export const metadata: Metadata = { title: "Kapcsolat | Jeromos Egyesület" };
+export const metadata: Metadata = {
+  title: "Kapcsolat | Jeromos Egyesület",
+  description:
+    "Lépj kapcsolatba a Jeromos Egyesülettel: menhelyünk címe, telefonszáma, e-mail elérhetősége és nyitvatartása Baján, örökbefogadással vagy önkéntes segítséggel kapcsolatban.",
+};
 
 export default function Kapcsolat() {
   return (

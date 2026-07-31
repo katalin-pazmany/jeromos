@@ -1,11 +1,17 @@
+import Image from "next/image";
 import Link from "next/link";
 import { formatAge, type Dog } from "@/data/dogs";
 
 export default function DogCard({ dog }: { dog: Dog }) {
   return (
     <Link className="dog-card" href={`/gazdira-varnak/${dog.slug}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={dog.image} alt={dog.photoAlt} />
+      <Image
+        src={dog.image}
+        alt={dog.photoAlt}
+        width={400}
+        height={260}
+        sizes="(max-width: 720px) 100vw, 33vw"
+      />
       <div className="dog-info">
         <div className="dog-info-top">
           <span className="dog-name">{dog.name}</span>

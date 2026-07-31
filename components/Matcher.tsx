@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   defaultPrefs,
@@ -139,8 +140,13 @@ function ResultCard({ result }: { result: MatchResult }) {
   return (
     <Link className="dog-card match-card" href={`/gazdira-varnak/${dog.slug}`}>
       <div className="match-photo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={dog.image} alt={dog.photoAlt} />
+        <Image
+          src={dog.image}
+          alt={dog.photoAlt}
+          width={400}
+          height={230}
+          sizes="(max-width: 720px) 100vw, 33vw"
+        />
         <span className="match-badge">{score}% egyezés</span>
       </div>
       <div className="dog-info">

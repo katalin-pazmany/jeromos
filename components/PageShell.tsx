@@ -22,7 +22,7 @@ export default function PageShell({
           <p className="lead">{lead}</p>
         </div>
       </section>
-      <main className="content wrap">{children}</main>
+      <main id="main-content" className="content wrap">{children}</main>
       <SiteFooter />
     </>
   );

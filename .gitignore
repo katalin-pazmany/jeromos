@@ -19,3 +19,8 @@ data/applications.json
 
 .vercel
 .env*
+
+# agent skill packages (local tooling, not app code)
+/.agents
+/.claude/skills
+/skills-lock.json

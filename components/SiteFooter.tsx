@@ -112,6 +112,7 @@ export default function SiteFooter() {
           <Link href="/segitseg">Segítség</Link>
           <Link href="/tanacsok">Tanácsok</Link>
           <Link href="/rolunk">Rólunk</Link>
+          <Link href="/adatvedelem">Adatvédelem</Link>
           <Link className="footer-admin" href="/admin" title="Belépés munkatársaknak">
             🔒 Admin
           </Link>

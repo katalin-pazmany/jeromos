@@ -6,6 +6,8 @@ import { getAllDogs } from "@/lib/dogs-store";
 
 export const metadata: Metadata = {
   title: "Gazdira várnak | Jeromos Egyesület",
+  description:
+    "Ismerd meg a Jeromos Egyesület gazdira váró kutyáit: szűrj méret, energiaszint, kor és nem szerint, és találd meg azt, aki tökéletesen illik hozzád.",
 };
 
 export const dynamic = "force-dynamic";

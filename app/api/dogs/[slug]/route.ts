@@ -39,6 +39,7 @@ export async function PATCH(
     const blob = await put(`dogs/${slug}.${ext}`, bytes, {
       access: "public",
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: file.type || undefined,
     });
     if (existing.image.includes(".blob.vercel-storage.com") && existing.image !== blob.url) {
