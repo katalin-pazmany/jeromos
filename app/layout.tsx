@@ -4,8 +4,22 @@ import "./globals.css";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jeromos-one.vercel.app";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Jeromos Egyesület | Minden kutya hazatalálhat",
   description: "Jeromos Egyesület – kutyamentés és örökbeadás Baján.",
+  openGraph: {
+    title: "Jeromos Egyesület | Minden kutya hazatalálhat",
+    description: "Jeromos Egyesület – kutyamentés és örökbeadás Baján.",
+    url: SITE_URL,
+    siteName: "Jeromos Egyesület",
+    locale: "hu_HU",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jeromos Egyesület | Minden kutya hazatalálhat",
+    description: "Jeromos Egyesület – kutyamentés és örökbeadás Baján.",
+  },
 };
 
 export const viewport = {
