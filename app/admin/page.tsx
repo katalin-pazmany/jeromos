@@ -248,7 +248,7 @@ export default function AdminPage() {
 
       {tab === "segitseg" && (
         <section className="admin-card">
-          <h2>Segítségkérések</h2>
+          <h2>Önkéntes jelentkezések</h2>
           <HelpRequestsPanel onSessionExpired={sessionExpired} />
         </section>
       )}
