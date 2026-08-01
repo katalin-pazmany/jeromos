@@ -36,6 +36,7 @@ export default function HelpRequestsPanel({
 }) {
   const [items, setItems] = useState<HelpRequest[] | null>(null);
   const [error, setError] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
 
   async function load() {
     const res = await fetch("/api/help", { cache: "no-store" });
@@ -44,7 +45,7 @@ export default function HelpRequestsPanel({
       return;
     }
     if (!res.ok) {
-      setError("Nem sikerült betölteni a segítségkéréseket.");
+      setError("Nem sikerült betölteni az önkéntes jelentkezéseket.");
       return;
     }
     setItems(await res.json());
@@ -82,34 +83,52 @@ export default function HelpRequestsPanel({
   return (
     <div className="submissions-list">
       <p className="admin-sub">
-        {items.length} segítségkérés összesen — {open.length} elintézetlen.
+        {items.length} önkéntes jelentkezés összesen — {open.length} elintézetlen.
       </p>
-      {items.length === 0 && <p>Még nem érkezett segítségkérés.</p>}
-      {[...open, ...done].map((h) => (
-        <div className={`submission-card${h.handled ? " handled" : ""}`} key={h.id}>
-          <div className="submission-head">
-            <label className="submission-check">
-              <input
-                type="checkbox"
-                checked={h.handled}
-                onChange={(e) => toggleHandled(h.id, e.target.checked)}
-              />
-              Elintézve
-            </label>
-            <span className="submission-date">{formatDate(h.createdAt)}</span>
+      {items.length === 0 && <p>Még nem érkezett önkéntes jelentkezés.</p>}
+      {[...open, ...done].map((h) => {
+        const isOpen = openId === h.id;
+        return (
+          <div className={`submission-card${h.handled ? " handled" : ""}`} key={h.id}>
+            <button
+              type="button"
+              className="submission-summary"
+              aria-expanded={isOpen}
+              onClick={() => setOpenId(isOpen ? null : h.id)}
+            >
+              <span className={`submission-chevron${isOpen ? " open" : ""}`} aria-hidden="true">
+                ▸
+              </span>
+              <span className="submission-title">
+                <b>{h.name}</b>
+                <span className="tag">{categoryLabel(h.category)}</span>
+              </span>
+              <span className="submission-date">{formatDate(h.createdAt)}</span>
+              <label
+                className="submission-check"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="checkbox"
+                  checked={h.handled}
+                  onChange={(e) => toggleHandled(h.id, e.target.checked)}
+                />
+                Elintézve
+              </label>
+            </button>
+            {isOpen && (
+              <div className="submission-body">
+                <div className="submission-contact">
+                  <a href={`mailto:${h.email}`}>{h.email}</a>
+                  {h.phone && <a href={`tel:${h.phone}`}>{h.phone}</a>}
+                  {h.availability && <span>{h.availability}</span>}
+                </div>
+                <p className="submission-intro">{h.message}</p>
+              </div>
+            )}
           </div>
-          <div className="submission-title">
-            <b>{h.name}</b>
-            <span className="tag">{categoryLabel(h.category)}</span>
-          </div>
-          <div className="submission-contact">
-            <a href={`mailto:${h.email}`}>{h.email}</a>
-            {h.phone && <a href={`tel:${h.phone}`}>{h.phone}</a>}
-            {h.availability && <span>{h.availability}</span>}
-          </div>
-          <p className="submission-intro">{h.message}</p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

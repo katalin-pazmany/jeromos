@@ -232,7 +232,7 @@ export default function AdminPage() {
           className={`admin-tab${tab === "segitseg" ? " active" : ""}`}
           onClick={() => setTab("segitseg")}
         >
-          Segítségkérések
+          Önkéntes jelentkezések
         </button>
       </div>
 

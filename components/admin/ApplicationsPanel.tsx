@@ -33,6 +33,7 @@ export default function ApplicationsPanel({
 }) {
   const [items, setItems] = useState<Application[] | null>(null);
   const [error, setError] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
 
   async function load() {
     const res = await fetch("/api/apply", { cache: "no-store" });
@@ -83,35 +84,53 @@ export default function ApplicationsPanel({
         {items.length} jelentkezés összesen — {open.length} elintézetlen.
       </p>
       {items.length === 0 && <p>Még nem érkezett jelentkezés.</p>}
-      {[...open, ...done].map((a) => (
-        <div className={`submission-card${a.handled ? " handled" : ""}`} key={a.id}>
-          <div className="submission-head">
-            <label className="submission-check">
-              <input
-                type="checkbox"
-                checked={a.handled}
-                onChange={(e) => toggleHandled(a.id, e.target.checked)}
-              />
-              Elintézve
-            </label>
-            <span className="submission-date">{formatDate(a.createdAt)}</span>
+      {[...open, ...done].map((a) => {
+        const isOpen = openId === a.id;
+        return (
+          <div className={`submission-card${a.handled ? " handled" : ""}`} key={a.id}>
+            <button
+              type="button"
+              className="submission-summary"
+              aria-expanded={isOpen}
+              onClick={() => setOpenId(isOpen ? null : a.id)}
+            >
+              <span className={`submission-chevron${isOpen ? " open" : ""}`} aria-hidden="true">
+                ▸
+              </span>
+              <span className="submission-title">
+                <b>{a.name}</b>
+                {a.dog && <span className="tag">{a.dog}</span>}
+              </span>
+              <span className="submission-date">{formatDate(a.createdAt)}</span>
+              <label
+                className="submission-check"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="checkbox"
+                  checked={a.handled}
+                  onChange={(e) => toggleHandled(a.id, e.target.checked)}
+                />
+                Elintézve
+              </label>
+            </button>
+            {isOpen && (
+              <div className="submission-body">
+                <div className="submission-contact">
+                  <a href={`mailto:${a.email}`}>{a.email}</a>
+                  {a.phone && <a href={`tel:${a.phone}`}>{a.phone}</a>}
+                  {a.city && <span>{a.city}</span>}
+                </div>
+                <div className="submission-meta">
+                  {a.garden && <span>Kert: {a.garden}</span>}
+                  {a.otherPets && <span>Van már állata: {a.otherPets}</span>}
+                </div>
+                <p className="submission-intro">{a.intro}</p>
+              </div>
+            )}
           </div>
-          <div className="submission-title">
-            <b>{a.name}</b>
-            {a.dog && <span className="tag">{a.dog}</span>}
-          </div>
-          <div className="submission-contact">
-            <a href={`mailto:${a.email}`}>{a.email}</a>
-            {a.phone && <a href={`tel:${a.phone}`}>{a.phone}</a>}
-            {a.city && <span>{a.city}</span>}
-          </div>
-          <div className="submission-meta">
-            {a.garden && <span>Kert: {a.garden}</span>}
-            {a.otherPets && <span>Van már állata: {a.otherPets}</span>}
-          </div>
-          <p className="submission-intro">{a.intro}</p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
