@@ -258,7 +258,19 @@ export default function AdminPage() {
       <>
       {/* Add / edit form */}
       <section className="admin-card" ref={formRef}>
-        <h2>{editingDog ? `Szerkesztés: ${editingDog.name}` : "Új kutya felvétele"}</h2>
+        <div className="admin-form-head">
+          {editingDog && (
+            <button
+              type="button"
+              className="admin-back-button"
+              onClick={cancelEdit}
+              aria-label="Vissza az új kutya felvételéhez"
+            >
+              ←
+            </button>
+          )}
+          <h2>{editingDog ? `Szerkesztés: ${editingDog.name}` : "Új kutya felvétele"}</h2>
+        </div>
         <form
           key={editingSlug ?? "new"}
           onSubmit={handleSubmit}

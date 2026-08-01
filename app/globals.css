@@ -1666,6 +1666,30 @@ h2 {
   font-size: 24px;
   margin: 0 0 18px;
 }
+.admin-form-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+.admin-form-head h2 {
+  margin: 0;
+}
+.admin-back-button {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.admin-back-button:hover {
+  background: var(--fog);
+}
 .admin-form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
