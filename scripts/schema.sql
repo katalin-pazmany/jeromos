@@ -21,6 +21,19 @@ CREATE TABLE IF NOT EXISTS dogs (
 );
 CREATE INDEX IF NOT EXISTS dogs_sort_order_idx ON dogs (sort_order);
 
+-- dog_photos is also created lazily by lib/dog-photos-store.ts on first use —
+-- this definition is kept here only for reference. Holds a dog's additional
+-- gallery photos; the cover photo stays in dogs.image.
+CREATE TABLE IF NOT EXISTS dog_photos (
+  id          BIGSERIAL PRIMARY KEY,
+  dog_slug    TEXT NOT NULL REFERENCES dogs(slug) ON DELETE CASCADE,
+  url         TEXT NOT NULL,
+  alt         TEXT NOT NULL DEFAULT '',
+  sort_order  INTEGER NOT NULL DEFAULT 0,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS dog_photos_dog_slug_idx ON dog_photos (dog_slug, sort_order, id);
+
 CREATE TABLE IF NOT EXISTS applications (
   id          TEXT PRIMARY KEY,
   created_at  TIMESTAMPTZ NOT NULL,

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { put, del } from "@vercel/blob";
 import { deleteDog, getDogBySlug, updateDog } from "@/lib/dogs-store";
+import { getPhotosForDog } from "@/lib/dog-photos-store";
 import { isAuthed, unauthorized } from "@/lib/admin-auth";
 import { parseDogFields, ALLOWED_IMAGE_EXT } from "@/lib/dog-form";
 
@@ -66,6 +67,11 @@ export async function DELETE(
   if (!(await isAuthed())) return unauthorized();
 
   const { slug } = await params;
+
+  // Must read gallery photos before deleteDog: the FK's ON DELETE CASCADE
+  // wipes their rows the moment the dog row goes.
+  const extraPhotos = await getPhotosForDog(slug);
+
   const removed = await deleteDog(slug);
   if (!removed) {
     return NextResponse.json({ error: "Nincs ilyen kutya." }, { status: 404 });
@@ -77,6 +83,17 @@ export async function DELETE(
       await del(removed.image);
     } catch {
       // already gone — ignore
+    }
+  }
+
+  // Best-effort removal of gallery photo blobs.
+  for (const photo of extraPhotos) {
+    if (photo.url.includes(".blob.vercel-storage.com")) {
+      try {
+        await del(photo.url);
+      } catch {
+        // already gone — ignore
+      }
     }
   }
 

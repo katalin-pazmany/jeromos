@@ -7,6 +7,7 @@ import PasswordInput from "@/components/PasswordInput";
 import SiteHeader from "@/components/SiteHeader";
 import ApplicationsPanel from "@/components/admin/ApplicationsPanel";
 import HelpRequestsPanel from "@/components/admin/HelpRequestsPanel";
+import DogPhotosPanel from "@/components/admin/DogPhotosPanel";
 
 type Tab = "kutyak" | "jelentkezesek" | "segitseg";
 
@@ -402,6 +403,13 @@ export default function AdminPage() {
             )}
           </div>
         </form>
+
+        {editingDog && (
+          <div className="admin-gallery-section">
+            <h3>További fényképek</h3>
+            <DogPhotosPanel slug={editingDog.slug} onSessionExpired={sessionExpired} />
+          </div>
+        )}
       </section>
 
       {/* Dog list */}
